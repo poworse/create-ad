@@ -1,0 +1,4 @@
+interface:
+  display_name: "Poster Style Prompts"
+  short_description: "Analyze posters and extract reusable prompts"
+  default_prompt: "Use $poster-style-prompts to analyze these reference posters and produce reusable prompt summaries in Markdown."
