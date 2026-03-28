@@ -1,125 +1,217 @@
 ---
 name: poster-style-prompts
-description: Use when the user wants to analyze reference posters or images and extract reusable visual prompts, lighting/composition notes, subject-background ratios, or ad-style prompt templates for future image generation.
+description: Use when the user provides reference posters plus a new poster brief and wants Chinese prompt generation, proposal-ready design rationale, or structured follow-up questions for missing ad brief details.
 ---
 
-# Poster Style Prompts
+# 海报提示词生成
 
-## Overview
+## 概述
 
-Use this skill to turn one or more reference posters into reusable prompt language for future image generation. Focus on transferable visual patterns instead of copying exact faces, logos, or poster text.
+这个 skill 用来处理一种明确任务：用户给若干张样板海报，再给一份新海报 brief，你基于样板海报的视觉规律和 brief 的传播目标，产出新的海报提示词与提案思路。
 
-## When to Use
+默认面向中文用户输出。不要把它做成纯分析报告，也不要只做风格摘抄；目标是为“这一次的新海报”服务。
 
-- The user provides poster, ad, KV, or promo images and wants similar atmosphere later.
-- The task asks for style analysis, lighting analysis, composition breakdown, or prompt extraction.
-- The user specifically cares about character-to-background scale, standing position, framing, or environment relationship.
-- The output should be reusable for Midjourney, Flux, SDXL, 即梦, 可灵, or generic image prompting.
+## 适用场景
 
-Do not use this skill when the task is mainly retouching, OCR, or recreating a poster pixel-for-pixel.
+- 用户提供样板海报，希望新海报延续其风格、氛围、光影、构图、人物与环境关系。
+- 用户同时提供海报主题、品牌、商品、代言人、传播点等 brief，希望直接得到可生成的提示词。
+- 用户需要的不只是 prompt，还需要一份可以提案使用的“设计思路”。
 
-## Workflow
+不适用于：
 
-1. Read all reference images as a set first.
-2. Separate common traits from image-specific details.
-3. Analyze the image in six dimensions:
-   - style and mood
-   - lighting and time of day
-   - composition and aspect ratio
-   - subject/background relationship
-   - color palette and material cues
-   - poster-safe empty space for later typography
-4. Convert the analysis into generic prompt language that preserves vibe, not identity.
-5. Output clean Markdown the user can reuse directly.
+- 逐像素复刻样板海报
+- 只做 OCR、修图、抠图
+- 没有样板海报，也没有明确 brief，却要求直接生成完整广告方案
 
-## What To Observe
+## 必填信息
 
-### Style and Mood
+开始生成前，先检查以下关键信息是否齐全：
 
-- Is it variety-show, lifestyle commercial, fashion editorial, movie-like, documentary, or e-commerce?
-- Is the feeling warm, festive, dreamy, premium, relaxed, youthful, intimate, energetic, or quiet?
+- 样板海报
+- 海报主题
+- 品牌名
+- 商品 / 主推内容
+- 代言人或主视觉主体
+- 核心传播点
+- 目标画幅 / 尺寸
+- 必须出现的文案或元素
 
-### Lighting and Time
+这些都视为关键信息。缺失时不要自行补全。
 
-- Identify golden hour, blue hour, night market lighting, overcast daylight, studio fill, or mixed lighting.
-- Note whether the light is soft or hard, whether highlights bloom, and whether background bokeh is important.
-- Pay attention to the color contrast between subject light and ambient light.
+## 缺失信息处理
 
-### Composition and Size
+如果 brief 不完整：
 
-- State the likely format such as `9:16`, `4:5`, `3:4`, or other vertical-poster ratios.
-- Estimate how much of the frame the subject occupies. Use rough percentages when exact measurement is impossible.
-- Describe whether the person is full-body, three-quarter, half-body, or close portrait.
-- Note where empty space exists for title, logo, or campaign copy.
+1. 先分析用户已提供的信息。
+2. 一次性列出全部缺失项，不要一轮只问一个。
+3. 每个缺失项后附一条简短建议，方便用户没有想法时参考。
+4. 在关键信息补全前，不输出最终提示词，也不输出最终设计思路。
 
-### Subject and Background Relationship
+追问风格要求：
 
-- Explain whether the person dominates the scene or blends into it.
-- Describe distance from camera, standing position, and whether the subject is centered or slightly offset.
-- Note how the environment supports the person: framing canopy, booth, trees, grass, lights, props, foreground blur.
-- Mention whether the background is only decorative or also narrative.
+- 使用中文
+- 直接、清晰、可执行
+- 不空泛
+- 每项建议都要能帮助用户快速补齐 brief
 
-### Prompt Generalization
-
-- Keep the environment type, lighting scheme, framing, depth, and emotional tone.
-- Remove exact brands, celebrity identity, show names, slogans, and visible text.
-- Replace specifics with reusable equivalents like `outdoor market booth`, `warm string lights`, `summer dusk`, `commercial celebrity poster`, `wooden stall`, `soft dreamy bokeh`.
-
-## Output Requirements
-
-Always return Markdown. Prefer this structure:
+示例格式：
 
 ```md
-# Reference Poster Analysis
+你这份 brief 还缺少以下关键信息：
 
-## Shared Visual Traits
-- ...
+1. 核心传播点
+建议参考：可以从“新品上市”“突出高端感”“强调年轻活力”“强化代言人与商品绑定”中确定一个主方向。
 
-## Key Differences
-- ...
-
-## Reusable Prompt Keywords
-- ...
-
-## General Prompt
-[Chinese version]
-
-## General Prompt (EN)
-[English version]
-
-## Optional Negative Prompt
-- ...
+2. 目标画幅 / 尺寸
+建议参考：如果用于小红书图文，优先考虑 `3:4`；如果用于短视频封面或开屏，优先考虑 `9:16`。
 ```
 
-If the user asks for more depth, add sections for:
+## 工作流
 
-- `构图与尺寸`
-- `人物与环境关系`
-- `光影拆解`
-- `模型专用版本`
+### 第一步：先看 brief
 
-## Prompt Writing Rules
+优先检查 brief 是否完整，再决定是否进入生成阶段。
 
-- Write prompts with moderate generality: similar vibe, not literal duplication.
-- Preserve camera distance, subject scale, and environmental layering.
-- Mention foreground, midground, and background when depth matters.
-- Use concrete visual words instead of abstract praise.
-- If an observation is inferred rather than certain, say so.
+不要一上来就长篇分析样板海报。
 
-## Common Failure Modes
+### 第二步：读取样板海报
 
-- Overfitting to text, brand marks, or celebrity identity.
-- Listing objects without explaining their compositional role.
-- Ignoring how much of the frame the person occupies.
-- Describing only the subject and forgetting why the background matters.
-- Making prompts too generic and losing the poster's emotional temperature.
+当 brief 已齐全时，分析样板海报中的可迁移特征，重点关注：
 
-## Quick Prompt Formula
+- 风格与氛围
+- 光影与时间感
+- 构图与画幅
+- 人物在画面中的比例
+- 人物和环境背景的关系
+- 前景、中景、后景的层次
+- 可留给标题、品牌字、商品信息的版式空间
 
-Use this pattern when the user wants a compact reusable prompt:
+### 第三步：把样板特征映射到新 brief
 
-`[poster type], [subject scale], [setting], [lighting], [subject placement], [environment framing], [color palette], [depth cues], [mood], [commercial finish]`
+不是照搬原海报，而是回答：
 
-Example:
+- 样板里哪些视觉语言值得继承
+- 这些视觉语言如何服务新的品牌 / 商品 / 代言人关系
+- 新海报最应该突出传达什么
+- 画面应该如何让观众第一眼理解这次传播重点
 
-`vertical commercial lifestyle poster, full-body subject occupying about 70% of the frame, standing at a wooden outdoor market booth, warm dusk string lights, near-center placement with a slight offset, canopy and trees framing the subject, golden and amber palette with blue-hour background, dreamy bokeh and soft foreground blur, relaxed youthful festive mood, polished celebrity-ad photography`
+### 第四步：生成结果
+
+最终输出固定为两部分：
+
+1. 提示词
+2. 设计思路
+
+## 样板海报分析重点
+
+分析样板海报时，优先提炼“可复用规则”，不要停留在表面物件罗列。
+
+重点回答：
+
+- 画面的商业气质是什么
+- 光线是暖调、冷暖对比、黄昏、夜景、棚拍感还是自然漫射
+- 人物占画面的比例大约是多少
+- 人物是压过背景，还是融入场景
+- 背景是装饰，还是承担叙事功能
+- 人物站位是否居中、偏置、前伸、与镜头互动
+- 环境如何围绕人物形成舞台感、包裹感或生活场景感
+
+## 输出要求
+
+始终输出 Markdown，并使用以下结构：
+
+```md
+# 海报生成结果
+
+## 提示词
+[中文提示词]
+
+## 设计思路
+### 1. 核心传播内容
+### 2. 品牌 / 商品 / 代言人关系
+### 3. 视觉表达策略
+### 4. 样板海报借鉴点
+### 5. 版式与信息层级建议
+```
+
+如果合适，可以在 `提示词` 下补充：
+
+- `英文提示词`
+- `负面提示词`
+- `模型适配版提示词`
+
+但这三项不是默认必出项。
+
+## 提示词写法
+
+提示词必须同时满足两件事：
+
+1. 继承样板海报的视觉规律
+2. 服务这次新海报的传播目标
+
+写法要求：
+
+- 中文优先
+- 具体描述画面，而不是堆砌空泛形容词
+- 明确主体、场景、光线、构图、景别、人物占比、环境关系
+- 明确商业海报属性，而不是普通人像摄影
+- 避免直接复制样板中的品牌、节目名、口号、明星身份信息
+
+推荐提示词骨架：
+
+`[海报类型]，[主体与身份]，[品牌/商品相关场景]，[光影特征]，[构图与景别]，[人物与环境关系]，[色彩氛围]，[画面重点]，[商业海报质感]`
+
+## 设计思路写法
+
+`设计思路` 是给提案用的，不是简单解释 prompt。
+
+固定包含以下 5 段：
+
+### 1. 核心传播内容
+
+说明这张海报最重要的信息是什么，观众第一眼应该接收到什么。
+
+### 2. 品牌 / 商品 / 代言人关系
+
+说明三者如何建立逻辑关系：
+
+- 是品牌借代言人放大调性
+- 还是商品借代言人建立信任
+- 还是代言人作为场景体验者，帮商品完成生活化表达
+
+### 3. 视觉表达策略
+
+说明为什么选这种场景、光影、构图、人物动作、环境关系来承载传播内容。
+
+### 4. 样板海报借鉴点
+
+只提炼对本次任务有帮助的借鉴点，例如：
+
+- 暖色夜市氛围
+- 全身人物站位
+- 摊位与人物形成包裹式构图
+- 前景虚化增强空间感
+
+### 5. 版式与信息层级建议
+
+说明：
+
+- 画面视觉中心在哪里
+- 品牌、商品名、标题、卖点文案应大致落在什么区域
+- 哪些区域适合留白，方便后续设计排版
+
+## 常见错误
+
+- brief 不完整却直接开写 prompt
+- 只分析样板风格，不回应新 brief 的传播任务
+- 只写好看氛围，不解释品牌 / 商品 / 代言人关系
+- 提示词太泛，导致样板海报的构图和空间关系丢失
+- 设计思路写成重复 prompt 的废话
+
+## 快速判断标准
+
+生成完成前，检查这三个问题：
+
+1. 这份结果是否明确回应了这次新海报的传播目标？
+2. 是否真的吸收了样板海报的人物比例、场景关系、光影与构图，而不只是复制几个关键词？
+3. 设计思路是否能被直接拿去做内部沟通或提案？

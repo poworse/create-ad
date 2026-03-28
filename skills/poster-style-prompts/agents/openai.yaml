@@ -1,4 +1,4 @@
 interface:
-  display_name: "Poster Style Prompts"
-  short_description: "Analyze posters and extract reusable prompts"
-  default_prompt: "Use $poster-style-prompts to analyze these reference posters and produce reusable prompt summaries in Markdown."
+  display_name: "海报提示词生成"
+  short_description: "基于样板海报与 brief 生成提案级海报提示方案"
+  default_prompt: "使用 $poster-style-prompts 结合这些样板海报和我的海报 brief，先检查缺失信息并集中追问，再输出新海报提示词和设计思路。"
